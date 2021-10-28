@@ -13,18 +13,27 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
+#include <sys/wait.h>
 
-int main(){
+int main(int agrc, char *argv[]){
 
 	int rc = fork();
 	
 	if(rc<0){ // fork failed
 		printf("can not instantiate a process");
 	}else if(rc==0){ // child process
-
+		printf("hello, I am chiudl (pid:%d)\n" ,(int) getpid());
+		char *myargs[3];
+		myargs[0] = strdup("wc");
+		myargs[1] = strdup("redirect.c");
+		myargs[2] = NULL;
+		execvp(myargs[0] , myargs);
+		printf("this shouldn't print out");
 
 	}else{ // parent process
-
+		int rc_wait = wait(NULL);
+		printf("parent done");
 
 	}	
 
