@@ -22,11 +22,19 @@ int isFileExecutable(const char* path){
 
 // Reading Input
 
+char* rtrim(char *s){
+
+	char *back = s + strlen(s);
+	while(isspace(*--back));
+		*(back+1)='\0';
+	return s;
+}
 void getLine(char* line, int max){
 	
 	if(fgets(line,INPUT_BUFFER_MAX,stdin)==NULL){
 		
 	}
+	rtrim(line);
 }
 //TODO: make it generic and pass a convert function
 void assignSeparated(char *line, const char* delim, ...){
@@ -42,4 +50,14 @@ void assignSeparated(char *line, const char* delim, ...){
 
 	}
 	va_end(ap);
+}
+
+void removeWord(char* line,const char* delim, char* res , int num){
+	char* token_ptr = strtok(line,delim);
+	int j=0;
+	while(token_ptr!=NULL){
+		if(j!=num)
+			strcat(res,token_ptr);
+	}
+
 }

@@ -25,9 +25,10 @@ int main(int agrc, char *argv[]){
 	char fileName[BUFFER_SIZE];
 	char programArgumets[BUFFER_SIZE]; // TODO: a list of arguments
 	char tempLine[BUFFER_SIZE];
+	char command[BUFFER_SIZE];
+
 	getLine(tempLine);
 	assignSeparated(tempLine," ",&programName,&fileName);
-	printf("%s\n",programName);
 
 	int rc = fork();
 	
@@ -35,18 +36,18 @@ int main(int agrc, char *argv[]){
 		fprintf(stderr,"can not instantiate a process");
 		exit(1);
 	}else if(rc==0){ // child process
-		printf("hello, I am chiudl (pid:%d)\n" ,(int) getpid());
-		close(STDOUT_FILENO);
-		open("./redirect.out",O_CREAT|O_WRONLY|O_TRUNC,S_IRWXU);
-		
+		printf("hello, I am child (pid:%d)\n" ,(int) getpid());
 		// now exec
-		char *myargs[3];
-		myargs[0] = strdup("wc");
-		myargs[1] = strdup("redirect.c");
-		myargs[2] = NULL;
-		execvp(myargs[0] , myargs);
-		printf("this shouldn't print out");
-
+		if(!isFileExecutable){
+			printf("given program is not executable");
+			return 1;
+		}
+		if(!isFileWritable(fileName)){
+			printf("give file is not writable");
+			return 1;
+		}
+		sprintf(command , "%s %s > %s",programName, tempLine, fileName);
+		int status = system(command);
 	}else{ // parent process
 		int rc_wait = wait(NULL);
 		printf("parent done");
