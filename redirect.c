@@ -15,15 +15,31 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/wait.h>
+#include <fcntl.h>
+#include "redirect.h"
+
+#define BUFFER_SIZE 256
 
 int main(int agrc, char *argv[]){
+	char programName[BUFFER_SIZE];
+	char fileName[BUFFER_SIZE];
+	char programArgumets[BUFFER_SIZE]; // TODO: a list of arguments
+	char tempLine[BUFFER_SIZE];
+	getLine(tempLine);
+	assignSeparated(tempLine," ",&programName,&fileName);
+	printf("%s\n",programName);
 
 	int rc = fork();
 	
 	if(rc<0){ // fork failed
-		printf("can not instantiate a process");
+		fprintf(stderr,"can not instantiate a process");
+		exit(1);
 	}else if(rc==0){ // child process
 		printf("hello, I am chiudl (pid:%d)\n" ,(int) getpid());
+		close(STDOUT_FILENO);
+		open("./redirect.out",O_CREAT|O_WRONLY|O_TRUNC,S_IRWXU);
+		
+		// now exec
 		char *myargs[3];
 		myargs[0] = strdup("wc");
 		myargs[1] = strdup("redirect.c");
