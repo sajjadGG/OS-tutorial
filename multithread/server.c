@@ -6,14 +6,11 @@
 #include<netinet/in.h>
 #include<string.h>
 #include<pthread.h>
-
 #define PORT 8090
 #define BUFFER_SIZE 30000
-#define MAX_THREAD 20
+#define MAX_THREAD 200
 
 typedef struct __myarg_t {
-//	char inp[BUFFER_SIZE];
-//	char message[BUFFER_SIZE];
 	int socket;
 
 
@@ -21,28 +18,32 @@ typedef struct __myarg_t {
 
 
 void *printMessage(void *arg){
-	myarg_t *m = (myarg_t *) arg;
-
+	int soc = *((int *) arg);
 	//write(m->socket,m->message,strlen(m->message));
-	write(m->socket,"HTTP:/1.1 200 OK\nContet-Type: text/plain\nContent-Length:20\n\nhello form thread",100);
 	sleep(5);
+	write(soc,"HTTP:/1.1 200 OK\nContet-Type: text/plain\nContent-Length:20\n\nhello form thread",100);
+	printf("---------------Hello message sent-------------\n");
+	close(soc);
+	pthread_exit(NULL);
 }
 
 int checkServerLoad(){
 	return 1;
 }
 //TODO:handle requests in a queue
-int handleRequest(const char* valread, const char* message, int socket, int (*checkServerLoad)(), void* (*taskFunc)(void * )){
+int handleRequest(const char* valread, const char* message, int* socket, int (*checkServerLoad)(), void* (*taskFunc)(void * )){
 	if(checkServerLoad()){
 		pthread_t p;
+		pthread_attr_t attr;
 		int rc;
-		myarg_t args;
-//		strcpy(args.inp, valread);
-//		strcpy(args.message, message);
-		args.socket = socket;
-		printf("here_222\n");
-		rc = pthread_create(&p,NULL,printMessage,&args);
-		pthread_join(p,NULL);
+		uint64_t ns = 4;
+		printf("WHYYYYYY!!!!!!! %d\n",socket);
+		printf("before");
+		printf("\n");
+		pthread_attr_init(&attr);
+		pthread_attr_setdetachstate(&attr,PTHREAD_CREATE_DETACHED);
+		rc = pthread_create(&p,&attr,printMessage,socket);
+	//	pthread_join(p,NULL);
 	}else{
 		printf("HTTP:/1.1 429 Too Many Requests\nContent-Type: text/plain\nContent-Length: 4\n\nwait");
 		return 0;
@@ -79,6 +80,8 @@ int main(int argc, char const *argv[]){
 		perror("In listen");
 		exit(EXIT_FAILURE);
 	}
+	int sockets[MAX_THREAD];
+	int num=0;
 	while(1)
 	{
 		printf("\n+++++++ Waiting for new connection ++++++++\n\n");
@@ -91,11 +94,9 @@ int main(int argc, char const *argv[]){
 		char buffer[BUFFER_SIZE] = {0};
 		valread = read(new_socket,buffer,BUFFER_SIZE);
 		printf("%s\n",buffer);
-		//uncomment following line and connect many clients
-		//sleep(5)
-		handleRequest(valread,hello,new_socket,checkServerLoad,printMessage);
-		printf("---------------Hello message sent-------------");
-		close(new_socket);
+		sockets[num] = new_socket;
+		handleRequest(valread,hello,&sockets[num],checkServerLoad,printMessage);
+		num++;
 	}
 
 }
