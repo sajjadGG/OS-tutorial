@@ -6,14 +6,19 @@
 
 int main(int argc, char *argv[])
 {
-	printf(1,"pid : memsize\n");
 	int pid = fork();
 	if(pid==0){
-		printf(1,"hi from %d",getpid());
-	
+		char *str;
+		str = (char*)malloc(150000);
+		str[0] = 'a';
+		printf(1,"hi from %d\n",getpid());
+		printf(1,"pid : memsize\n");
+		printf(1,"%d\n",proc_dump());
 	}
 	else
-		printf(1,"My first userprogram: %d\n",proc_dump());
+		while(1){
+
+		}
 	exit();
 }
 
