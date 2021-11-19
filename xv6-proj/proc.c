@@ -74,17 +74,34 @@ int getprocinfo(struct proc_info *up){
 	acquire(&ptable.lock);
 	for(p=ptable.proc;p<&ptable.proc[NPROC];p++)
 	{
-		if(p->state == RUNNING)
+		if(p->state == RUNNING || p->state==RUNNABLE )
 		{
 			info->pid = p->pid;
-			info->memsize=p->sz;
+			info->memsize=(int)p->sz;
 			num++;
 			info++;
-			cprintf("%d : %p\n",p->pid,p->sz);
+		//	cprintf("%d : %p\n",p->pid,p->sz);
 		}
 		
 	}
 
+	int i=0,j=0;
+	struct proc_info temp;
+	//good old bubble sort :)
+//	cprintf("lets go again\n");
+	for(j=0;j<num;j++){
+		for(i=j+1;i<num;i++){
+			if(up[j].memsize<up[i].memsize){
+				temp = up[j];
+				up[j] = up[i];
+				up[i] = temp;
+			}
+		}
+	}
+	for(i=0;i<num;i++)
+	{
+		cprintf("%d : %d\n",up[i].pid,up[i].memsize);
+	}
 	release(&ptable.lock);
 	return num;
 
