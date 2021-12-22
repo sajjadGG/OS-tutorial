@@ -7,8 +7,7 @@ void error (char *msg);
 int main (int argc, char **argv)
 {
 
-    FILE *fp;
-    fp = fopen("log.txt","w+");
+ 
     
 
 
@@ -86,10 +85,12 @@ int main (int argc, char **argv)
 
         asem [0].sem_op = -1;
         if (semop (spool_signal_sem, asem, 1) == -1)
-	    perror ("semop: spool_signal_sem");
+	        perror ("semop: spool_signal_sem");
     
+        FILE *fp;
+        fp = fopen("log.txt","w+");
         fprintf (fp,"%s", shared_mem_ptr -> buf [shared_mem_ptr -> buffer_print_index]);
-
+        fclose(fp);
 
         (shared_mem_ptr -> buffer_print_index)++;
         if (shared_mem_ptr -> buffer_print_index == MAX_BUFFERS)
@@ -100,7 +101,7 @@ int main (int argc, char **argv)
         if (semop (buffer_count_sem, asem, 1) == -1)
 	    perror ("semop: buffer_count_sem");
     }
-    fclose(fp);
+    
 }
 
 //TODO: close open file
