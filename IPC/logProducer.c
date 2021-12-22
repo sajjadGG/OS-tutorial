@@ -73,7 +73,7 @@ int main (int argc, char **argv)
 	    error ("semop: mutex_sem");
 
 
-            sprintf (shared_mem_ptr -> buf [shared_mem_ptr -> buffer_index], "(%d): %s\n", getpid (), buf);
+            sprintf (shared_mem_ptr -> buf [shared_mem_ptr -> buffer_index], "%d:[%s]\n", getpid (), buf);
             (shared_mem_ptr -> buffer_index)++;
             if (shared_mem_ptr -> buffer_index == MAX_BUFFERS)
                 shared_mem_ptr -> buffer_index = 0;
