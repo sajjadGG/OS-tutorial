@@ -6,6 +6,13 @@ void error (char *msg);
 
 int main (int argc, char **argv)
 {
+
+    FILE *fp;
+    fp = fopen("log.txt","w+")
+    
+
+
+
     key_t s_key;
 
     union semun  
@@ -81,7 +88,7 @@ int main (int argc, char **argv)
         if (semop (spool_signal_sem, asem, 1) == -1)
 	    perror ("semop: spool_signal_sem");
     
-        printf ("%s", shared_mem_ptr -> buf [shared_mem_ptr -> buffer_print_index]);
+        fprintf (fp,"%s", shared_mem_ptr -> buf [shared_mem_ptr -> buffer_print_index]);
 
 
         (shared_mem_ptr -> buffer_print_index)++;
@@ -93,9 +100,10 @@ int main (int argc, char **argv)
         if (semop (buffer_count_sem, asem, 1) == -1)
 	    perror ("semop: buffer_count_sem");
     }
+    fclose(fp);
 }
 
-
+//TODO: close open file
 void error (char *msg)
 {
     perror (msg);
