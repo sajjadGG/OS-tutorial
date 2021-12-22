@@ -8,7 +8,7 @@ int main (int argc, char **argv)
 {
 
     FILE *fp;
-    fp = fopen("log.txt","w+")
+    fp = fopen("log.txt","w+");
     
 
 
