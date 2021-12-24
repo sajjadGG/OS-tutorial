@@ -23,7 +23,7 @@ void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int
          0660 | IPC_CREAT)) == -1)
         error ("shmget"); 
 
-    if ((shared_mem_ptr = (struct shared_memory *) shmat (shm_id, NULL, 0)) 
+    if ((shared_mem_ptr = (struct shared_memory *) shmat (*shm, NULL, 0)) 
          == (struct shared_memory *) -1) 
         error ("shmat");
 
