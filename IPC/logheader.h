@@ -9,11 +9,11 @@
 
 
 #define MAX_BN 10
-#define SMK_PATH "/tmp/shared_memory_key"
-#define SEMK_PATH "/tmp/sem-mutex-key"
-#define SEMBC_PATH "/tmp/sem-buffer-count-key"
-#define SEMSS_PATH "/tmp/sem-spool-signal-key"
-#define PROJECT_ID 'K'
+#define SMK_PATH "logger.c"
+#define SEMK_PATH "logProducer.c"
+#define SEMBC_PATH "logheader.h"
+#define SEMSS_PATH "Makefile"
+#define PROJECT_ID 'S'
 
 struct shared_memory {
     char buf [MAX_BN] [256];
