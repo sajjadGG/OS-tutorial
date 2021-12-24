@@ -21,11 +21,11 @@ struct shared_memory {
     int buffer_print_index;
 };
 
-union semun  
+typedef union   
 {
     int val;
     struct semid_ds *buf;
     ushort array [1];
-}
+}semun;
 
 
