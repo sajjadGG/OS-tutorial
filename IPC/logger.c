@@ -4,22 +4,65 @@
 
 void error (char *msg);
 
+void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
+{
+    if ((*s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
+        error ("ftok");
+
+    if ((*ms = semget (*s_key, 1, 0660 | IPC_CREAT)) == -1)
+        error ("semget");
+
+    sem_attr->val = 0;        
+    if (semctl (*ms, 0, SETVAL, *sem_attr) == -1)
+        error ("semctl SETVAL");
+
+    if ((*s_key = ftok (SMK_PATH, PROJECT_ID)) == -1)
+        error ("ftok");
+
+    if ((*shm = shmget (*s_key, sizeof (struct shared_memory), 
+         0660 | IPC_CREAT)) == -1)
+        error ("shmget"); 
+
+    if ((shared_mem_ptr = (struct shared_memory *) shmat (shm_id, NULL, 0)) 
+         == (struct shared_memory *) -1) 
+        error ("shmat");
+
+    shared_mem_ptr -> buffer_index = shared_mem_ptr -> buffer_print_index = 0;
+
+    if ((*s_key = ftok (SEMBC_PATH, PROJECT_ID)) == -1)
+        error ("ftok");
+    if ((*bcs = semget (*s_key, 1, 0660 | IPC_CREAT)) == -1)
+        error ("semget");
+
+    sem_attr->val = MAX_BN; 
+
+    if (semctl (*bcs, 0, SETVAL, *sem_attr) == -1)
+        error ("semctl SETVAL");
+
+    if ((*s_key = ftok (SEMSS_PATH, PROJECT_ID)) == -1)
+        error ("ftok");
+    if ((*sss = semget (*s_key, 1, 0660 | IPC_CREAT)) == -1)
+        error ("semget");
+
+    
+    sem_attr->val = 0;    
+    if (semctl (*sss, 0, SETVAL, *sem_attr) == -1)
+        error ("semctl SETVAL");
+    
+
+    sem_attr->val = 1;
+    if (semctl (*ms, 0, SETVAL, *sem_attr) == -1)
+        error ("semctl SETVAL"); 
+
+}
+
+
 int main (int argc, char **argv)
 {
 
- 
-    
-
-
-
     key_t s_key;
 
-    union semun  
-    {
-        int val;
-        struct semid_ds *buf;
-        ushort array [1];
-    } sem_attr;
+    semun sem_attr;
 
     int shm_id;
     struct shared_memory *shared_mem_ptr;
@@ -27,64 +70,19 @@ int main (int argc, char **argv)
     
     printf ("logger: hello world\n");
 
-
-    if ((s_key = ftok (SEM_MUTEX_KEY, PROJECT_ID)) == -1)
-        error ("ftok");
-
-    if ((mutex_sem = semget (s_key, 1, 0660 | IPC_CREAT)) == -1)
-        error ("semget");
-
-    sem_attr.val = 0;        
-    if (semctl (mutex_sem, 0, SETVAL, sem_attr) == -1)
-        error ("semctl SETVAL");
-    
-
-    if ((s_key = ftok (SHARED_MEMORY_KEY, PROJECT_ID)) == -1)
-        error ("ftok");    
-    if ((shm_id = shmget (s_key, sizeof (struct shared_memory), 
-         0660 | IPC_CREAT)) == -1)
-        error ("shmget");
-    if ((shared_mem_ptr = (struct shared_memory *) shmat (shm_id, NULL, 0)) 
-         == (struct shared_memory *) -1) 
-        error ("shmat");
-
-    shared_mem_ptr -> buffer_index = shared_mem_ptr -> buffer_print_index = 0;
+    initialize(&s_key,&mutex_sem,&buffer_count_sem,&spool_signal_sem,&sem_attr,&shm_id,shared_mem_ptr);
 
 
-    if ((s_key = ftok (SEM_BUFFER_COUNT_KEY, PROJECT_ID)) == -1)
-        error ("ftok");
-    if ((buffer_count_sem = semget (s_key, 1, 0660 | IPC_CREAT)) == -1)
-        error ("semget");
+    struct sembuf mysem [1];
 
-    sem_attr.val = MAX_BUFFERS;    
-    if (semctl (buffer_count_sem, 0, SETVAL, sem_attr) == -1)
-        error ("semctl SETVAL");
-
-
-    if ((s_key = ftok (SEM_SPOOL_SIGNAL_KEY, PROJECT_ID)) == -1)
-        error ("ftok");
-    if ((spool_signal_sem = semget (s_key, 1, 0660 | IPC_CREAT)) == -1)
-        error ("semget");
-
-    sem_attr.val = 0;    
-    if (semctl (spool_signal_sem, 0, SETVAL, sem_attr) == -1)
-        error ("semctl SETVAL");
-    
-
-    sem_attr.val = 1;
-    if (semctl (mutex_sem, 0, SETVAL, sem_attr) == -1)
-        error ("semctl SETVAL"); 
-
-    struct sembuf asem [1];
-
-    asem [0].sem_num = 0;
-    asem [0].sem_op = 0;
-    asem [0].sem_flg = 0;
+    mysem [0].sem_num = 0;
+    mysem [0].sem_op = 0;
+    mysem [0].sem_flg = 0;
 
     while (1) {  
 
-        asem [0].sem_op = -1;
-        if (semop (spool_signal_sem, asem, 1) == -1)
+        mysem [0].sem_op = -1;
+        if (semop (spool_signal_sem, mysem, 1) == -1)
 	        perror ("semop: spool_signal_sem");
     
         FILE *fp;
@@ -93,12 +91,12 @@ int main (int argc, char **argv)
         fclose(fp);
 
         (shared_mem_ptr -> buffer_print_index)++;
-        if (shared_mem_ptr -> buffer_print_index == MAX_BUFFERS)
+        if (shared_mem_ptr -> buffer_print_index == MAX_BN)
            shared_mem_ptr -> buffer_print_index = 0;
 
 
-        asem [0].sem_op = 1;
-        if (semop (buffer_count_sem, asem, 1) == -1)
+        mysem [0].sem_op = 1;
+        if (semop (buffer_count_sem, mysem, 1) == -1)
 	    perror ("semop: buffer_count_sem");
     }
     

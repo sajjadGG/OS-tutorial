@@ -8,17 +8,24 @@
 #include <sys/sem.h>
 
 
-#define MAX_BUFFERS 10
-#define SHARED_MEMORY_KEY "/tmp/shared_memory_key"
-#define SEM_MUTEX_KEY "/tmp/sem-mutex-key"
-#define SEM_BUFFER_COUNT_KEY "/tmp/sem-buffer-count-key"
-#define SEM_SPOOL_SIGNAL_KEY "/tmp/sem-spool-signal-key"
+#define MAX_BN 10
+#define SMK_PATH "/tmp/shared_memory_key"
+#define SEMK_PATH "/tmp/sem-mutex-key"
+#define SEMBC_PATH "/tmp/sem-buffer-count-key"
+#define SEMSS_PATH "/tmp/sem-spool-signal-key"
 #define PROJECT_ID 'K'
 
 struct shared_memory {
-    char buf [MAX_BUFFERS] [256];
+    char buf [MAX_BN] [256];
     int buffer_index;
     int buffer_print_index;
 };
+
+union semun  
+{
+    int val;
+    struct semid_ds *buf;
+    ushort array [1];
+}
 
 

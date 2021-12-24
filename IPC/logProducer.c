@@ -9,25 +9,20 @@ void error (char *msg);
 int main (int argc, char **argv)
 {
     key_t s_key;
-    // union semun  
-    // {
-    //     int val;
-    //     struct semid_ds *buf;
-    //     ushort array [1];
-    // } sem_attr;
+
 
     int shm_id;
     struct shared_memory *shared_mem_ptr;
     int mutex_sem, buffer_count_sem, spool_signal_sem;
     
 
-    if ((s_key = ftok (SEM_MUTEX_KEY, PROJECT_ID)) == -1)
+    if ((s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
         error ("ftok");
     if ((mutex_sem = semget (s_key, 1, 0)) == -1)
         error ("semget");
     
 
-    if ((s_key = ftok (SHARED_MEMORY_KEY, PROJECT_ID)) == -1)
+    if ((s_key = ftok (SMK_PATH, PROJECT_ID)) == -1)
         error ("ftok");    
     if ((shm_id = shmget (s_key, sizeof (struct shared_memory), 0)) == -1)
         error ("shmget");
@@ -35,13 +30,13 @@ int main (int argc, char **argv)
          == (struct shared_memory *) -1) 
         error ("shmat");
 
-    if ((s_key = ftok (SEM_BUFFER_COUNT_KEY, PROJECT_ID)) == -1)
+    if ((s_key = ftok (SEMBC_PATH, PROJECT_ID)) == -1)
         error ("ftok");
     if ((buffer_count_sem = semget (s_key, 1, 0)) == -1)
         error ("semget");
 
 
-    if ((s_key = ftok (SEM_SPOOL_SIGNAL_KEY, PROJECT_ID)) == -1)
+    if ((s_key = ftok (SEMSS_PATH, PROJECT_ID)) == -1)
         error ("ftok");
     if ((spool_signal_sem = semget (s_key, 1, 0)) == -1)
         error ("semget");
@@ -75,7 +70,7 @@ int main (int argc, char **argv)
 
             sprintf (shared_mem_ptr -> buf [shared_mem_ptr -> buffer_index], "%d:[%s]\n", getpid (), buf);
             (shared_mem_ptr -> buffer_index)++;
-            if (shared_mem_ptr -> buffer_index == MAX_BUFFERS)
+            if (shared_mem_ptr -> buffer_index == MAX_BN)
                 shared_mem_ptr -> buffer_index = 0;
 
         asem [0].sem_op = 1;
