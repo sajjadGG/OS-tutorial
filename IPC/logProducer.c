@@ -1,8 +1,6 @@
 #include "logheader.h"
 
 
-void error (char *msg);
-
 int main (int argc, char **argv)
 {
     key_t s_key;
@@ -63,9 +61,3 @@ int main (int argc, char **argv)
     exit (0);
 }
 
-// Print system error and exit
-void error (char *msg)
-{
-    perror (msg);
-    exit (1);
-}
