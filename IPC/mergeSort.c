@@ -9,18 +9,35 @@
 void mergeSort(int arr[], int l, int h);
 void merge(int a[], int l1, int h1, int h2);
 int *p_count; 
+
+ 
+/* merge sort sequential*/
+void mergeSort(int arr[], int l, int r)
+{
+    if (l < r) {
+
+        int m = l + (r - l) / 2;
+  
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+  
+        merge(arr, l, m, r);
+    }
+}
+
 void mergeSort_parallel(int a[], int l, int h)
 {
     int i, len=(h-l+1);
-    //TODO stop based on number of created process
+    
     if (p_count[0]>=PN)
     {
-	 mergeSort(a, l,h);
+	    mergeSort(a, l,h);
         return;
     }
  
     pid_t lpid,rpid;
     p_count[0]+=2; // count optimistically
+
     lpid = fork();
     if (lpid==0)
     {
@@ -39,73 +56,44 @@ void mergeSort_parallel(int a[], int l, int h)
  
     int status;
  
-    // Wait for child processes to finish
     waitpid(lpid, &status, 0);
     waitpid(rpid, &status, 0);
- 
-    // Merge the sorted subarrays
+
     merge(a, l, l+len/2-1, h);
 }
  
-/* merge sort sequential*/
-void mergeSort(int arr[], int l, int r)
-{
-    if (l < r) {
-        // Same as (l+r)/2, but avoids overflow for
-        // large l and h
-        int m = l + (r - l) / 2;
-  
-        // Sort first and second halves
-        mergeSort(arr, l, m);
-        mergeSort(arr, m + 1, r);
-  
-        merge(arr, l, m, r);
-    }
-}
- 
-// Method to merge sorted subarrays
 void merge(int a[], int l1, int h1, int h2)
 {
-
-    int count=h2-l1+1;
-    int sorted[count];
-    int i=l1, k=h1+1, m=0;
+    int cand_i , cand_j;
+    int len=h2-l1+1;
+    int res[len];
+    int i=l1, k=h1+1, m=l1;
     while (i<=h1 && k<=h2)
-    {
-        if (a[i]<a[k])
-            sorted[m++]=a[i++];
-        else if (a[k]<a[i])
-            sorted[m++]=a[k++];
-        else if (a[i]==a[k])
-        {
-            sorted[m++]=a[i++];
-            sorted[m++]=a[k++];
+    {   
+        cand_i = a[i];
+        cand_j = a[k];
+        if (cand_i<=cand_j){
+            a[m++]=cand_i;
+            i++;
         }
+        else{
+            a[m++]=cand_j;
+            k++;
+        }
+ 
     }
  
+    //left overs
     while (i<=h1)
-        sorted[m++]=a[i++];
+        a[m++]=a[i++];
  
     while (k<=h2)
-        sorted[m++]=a[k++];
+        a[m++]=a[k++];
  
-    int arr_count = l1;
-    for (i=0; i<count; i++,l1++)
-        a[l1] = sorted[i];
 }
  
 
  
-// To fill randome values in array for testing
-// purpose
-void fillData(int a[], int len)
-{
-    // Create random arrays
-    int i;
-    for (i=0; i<len; i++)
-        a[i] = rand();
-    return;
-}
  
 void printArr(int arr[] , int size){
     printf("printing array:\n");
@@ -142,23 +130,21 @@ int main()
         _exit(1);
     }
  
-    srand(time(NULL));
-    fillData(shm_array, length);
+    shm_array = {12,25,36,78,2,3,5,6,8,11,0,135,55,44,32,69};
  
     mergeSort_parallel(shm_array, 0, length-1);
  
-    // Check if array is sorted or not
+
     printArr(shm_array, length);
  
-    /* Detach from the shared memory now that we are
-       done using it. */
+
     if (shmdt(shm_array) == -1)
     {
         perror("shmdt");
         _exit(1);
     }
  
-    /* Delete the shared memory segment. */
+ 
     if (shmctl(shmid, IPC_RMID, NULL) == -1)
     {
         perror("shmctl");
