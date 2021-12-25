@@ -15,6 +15,13 @@
 #define SEMSS_PATH "Makefile"
 #define PROJECT_ID 'S'
 
+void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr);
+
+void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
+
+void error (char *msg)
+
+
 struct shared_memory {
     char buf [MAX_BN] [256];
     int buffer_index;

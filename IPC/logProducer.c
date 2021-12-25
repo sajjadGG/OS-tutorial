@@ -10,34 +10,10 @@ int main (int argc, char **argv)
 
     int shm_id;
     struct shared_memory *shared_mem_ptr;
-    int mutex_sem, buffer_count_sem, spool_signal_sem;
+    int mutex_sem, buffer_count_sem, logger_signal_sem;
     
 
-    if ((s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
-        error ("ftok");
-    if ((mutex_sem = semget (s_key, 1, 0)) == -1)
-        error ("semget");
-    
-
-    if ((s_key = ftok (SMK_PATH, PROJECT_ID)) == -1)
-        error ("ftok");    
-    if ((shm_id = shmget (s_key, sizeof (struct shared_memory), 0)) == -1)
-        error ("shmget");
-    if ((shared_mem_ptr = (struct shared_memory *) shmat (shm_id, NULL, 0)) 
-         == (struct shared_memory *) -1) 
-        error ("shmat");
-
-    if ((s_key = ftok (SEMBC_PATH, PROJECT_ID)) == -1)
-        error ("ftok");
-    if ((buffer_count_sem = semget (s_key, 1, 0)) == -1)
-        error ("semget");
-
-
-    if ((s_key = ftok (SEMSS_PATH, PROJECT_ID)) == -1)
-        error ("ftok");
-    if ((spool_signal_sem = semget (s_key, 1, 0)) == -1)
-        error ("semget");
-    
+    initialize_producer(&s_key,&mutex_sem,&buffer_count_sem,&logger_signal_sem,&sem_attr,&shm_id,shared_mem_ptr)
     struct sembuf asem [1];
 
     asem [0].sem_num = 0;
@@ -76,8 +52,8 @@ int main (int argc, char **argv)
     
 
         asem [0].sem_op = 1;
-        if (semop (spool_signal_sem, asem, 1) == -1)
-	    error ("semop: spool_signal_sem");
+        if (semop (logger_signal_sem, asem, 1) == -1)
+	    error ("semop: logger_signal_sem");
 
         printf ("Please type a message: ");
     }
