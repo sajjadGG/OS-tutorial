@@ -6,8 +6,37 @@
 #include <unistd.h>
 #define PN 16
 
-void mergeSort(int arr[], int l, int h);
-void merge(int a[], int l1, int h1, int h2);
+//merge with no aux array :)
+void merge(int a[], int l1, int h1, int h2)
+{
+    int cand_i , cand_j;
+    int len=h2-l1+1;
+    int res[len];
+    int i=l1, k=h1+1, m=l1;
+    while (i<=h1 && k<=h2)
+    {   
+        cand_i = a[i];
+        cand_j = a[k];
+        if (cand_i<=cand_j){
+            a[m++]=cand_i;
+            i++;
+        }
+        else{
+            a[m++]=cand_j;
+            k++;
+        }
+ 
+    }
+
+    //left overs
+    while (i<=h1)
+        a[m++]=a[i++];
+ 
+    while (k<=h2)
+        a[m++]=a[k++];
+ 
+}
+
 int *p_count; 
 
  
@@ -31,12 +60,13 @@ void mergeSort_parallel(int a[], int l, int h)
     
     if (p_count[0]>=PN)
     {
+        //any other sort can be used here but since the question wanted merge we still merge sequentiually at this step
 	    mergeSort(a, l,h);
         return;
     }
  
     pid_t lpid,rpid;
-    p_count[0]+=2; // count optimistically
+    p_count[0]+=2; // count optimistically hoping for the best
 
     lpid = fork();
     if (lpid==0)
@@ -45,8 +75,8 @@ void mergeSort_parallel(int a[], int l, int h)
         _exit(0);
     }
     else
-    {
-
+    {   // parent (ignoring failed state)
+        rpid = fork();
         if(rpid==0)
         {
             mergeSort_parallel(a,l+len/2,h);
@@ -62,41 +92,13 @@ void mergeSort_parallel(int a[], int l, int h)
     merge(a, l, l+len/2-1, h);
 }
  
-void merge(int a[], int l1, int h1, int h2)
-{
-    int cand_i , cand_j;
-    int len=h2-l1+1;
-    int res[len];
-    int i=l1, k=h1+1, m=l1;
-    while (i<=h1 && k<=h2)
-    {   
-        cand_i = a[i];
-        cand_j = a[k];
-        if (cand_i<=cand_j){
-            a[m++]=cand_i;
-            i++;
-        }
-        else{
-            a[m++]=cand_j;
-            k++;
-        }
- 
-    }
- 
-    //left overs
-    while (i<=h1)
-        a[m++]=a[i++];
- 
-    while (k<=h2)
-        a[m++]=a[k++];
- 
-}
- 
 
+ 
+// fill array randomly
 void fillrand(int arr[] , int size){
     int i=0;
     for (i=0; i<size; i++)
-        arr[i] = rand();
+        arr[i] = rand()%512; // to better check the result scale it down
     return;
 } 
  
@@ -108,7 +110,7 @@ void printArr(int arr[] , int size){
     }
     printf("\n");
 } 
-// Driver code
+
 int main()
 {
     int shmid;
@@ -134,13 +136,11 @@ int main()
         perror("shmat");
         _exit(1);
     }
- 
+    
+
     srand(time(NULL));
     fillrand(shm_array, length);
- 
     mergeSort_parallel(shm_array, 0, length-1);
- 
-
     printArr(shm_array, length);
  
 
