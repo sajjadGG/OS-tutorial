@@ -27,7 +27,7 @@ int main (int argc, char **argv)
         log_preprocess(buf,length);
 
         fd = open(myfifo, O_WRONLY);
-        sprintf(filebuf,"%d:[%s]\n", getpid (), buf)
+        sprintf(filebuf,"%d:[%s]\n", getpid (), buf);
         write(fd,filebuf,sizeof(filebuf));
         close(fd);
 
