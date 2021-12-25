@@ -26,7 +26,7 @@ int main (int argc, char **argv)
         int length = strlen (buf);
         log_preprocess(buf,length);
 
-        fd = open(myfifo, 'a+');
+        fd = fopen(myfifo, 'a+');
         sprintf(filebuf,"%d:[%s]\n", getpid (), buf);
         write(fd,filebuf,sizeof(filebuf));
         close(fd);
