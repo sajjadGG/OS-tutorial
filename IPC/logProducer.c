@@ -3,17 +3,8 @@
 
 int main (int argc, char **argv)
 {
-    key_t s_key;
 
-
-    int shm_id;
-    struct shared_memory *shared_mem_ptr;
-    int mutex_sem, buffer_count_sem, logger_signal_sem;
-    
-
-    // shared_mem_ptr = initialize_producer(&s_key,&mutex_sem,&buffer_count_sem,&logger_signal_sem,&shm_id,shared_mem_ptr);
-    
-    int faield
+    int fd;
     char * myfifo = '/tmp/myfifo';
 
     mkfifo(myfifo,0666);
