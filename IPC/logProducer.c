@@ -17,6 +17,7 @@ int main (int argc, char **argv)
     asem [0].sem_flg = 0;
 
     char buf [BUFFSIZE];
+    char filebuf[2*BUFFSIZE]; // for preprocessing purpose (headroom)
 
     printf ("type to produce log: ");
 
@@ -26,7 +27,8 @@ int main (int argc, char **argv)
         log_preprocess(buf,length);
 
         fd = open(myfifo, O_WRONLY);
-        write(fd,"%d:[%s]\n", getpid (), buf);
+        sprintf(filebuf,"%d:[%s]\n", getpid (), buf)
+        write(fd,filebuf,sizeof(filebuf));
         close(fd);
 
         printf ("type to produce log: ");
