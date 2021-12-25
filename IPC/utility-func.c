@@ -37,7 +37,7 @@ int * get_number(long* pos)
         FILE *fp;
         fp = fopen(MKRES,"a+");
         fprintf (fp,"%s", line);
-        fclose(fp)
+        fclose(fp);
     } 
     fclose(file);
     return 0;
