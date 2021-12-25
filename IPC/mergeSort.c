@@ -4,24 +4,23 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#define PN 4
+#define PN 16
 
 void mergeSort(int arr[], int l, int h);
 void merge(int a[], int l1, int h1, int h2);
-int p_count=0; 
+int *p_count; 
 void mergeSort_parallel(int a[], int l, int h)
 {
     int i, len=(h-l+1);
- 
     //TODO stop based on number of created process
-    if (p_count>=PN)
+    if (p_count[0]>=PN)
     {
-        mergeSort(a, l,h);
+	 mergeSort(a, l,h);
         return;
     }
  
     pid_t lpid,rpid;
-    p_count+=2; // count optimistically
+    p_count[0]+=2; // count optimistically
     lpid = fork();
     if (lpid==0)
     {
@@ -123,8 +122,10 @@ int main()
     key_t key = IPC_PRIVATE;
     int *shm_array;
  
+    p_count = (int *) malloc(sizeof(int)*1);
+    p_count[0]=0;
 
-    int length = 128;
+    int length = 16;
  
 
     size_t SHM_SIZE = sizeof(int)*length;
