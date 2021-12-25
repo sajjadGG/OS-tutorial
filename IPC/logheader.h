@@ -17,7 +17,7 @@
 
 
 void error (char *msg);
-
+void log_preprocess(char buf[], int length);
 
 struct shared_memory {
     char buf [MAX_BN] [256];

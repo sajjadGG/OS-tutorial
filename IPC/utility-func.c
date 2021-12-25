@@ -1,5 +1,11 @@
 #include "logheader.h"
 
+void log_preprocess(char buf[], int length){
+    if (buf [length - 1] == '\n')
+           buf [length - 1] = '\0';
+}
+
+
 struct shared_memory * initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
 {
     if ((*s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)

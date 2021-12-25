@@ -1,5 +1,5 @@
 #include "logheader.h"
-
+#define BUFFSIZE 200
 
 int main (int argc, char **argv)
 {
@@ -18,28 +18,28 @@ int main (int argc, char **argv)
     asem [0].sem_op = 0;
     asem [0].sem_flg = 0;
 
-    char buf [200];
+    char buf [BUFFSIZE];
 
-    printf ("Please type a message: ");
+    printf ("type to produce log: ");
 
-    while (fgets (buf, 198, stdin)) {
-        // remove newline from string
+    while (fgets (buf, BUFFSIZE-2, stdin)) {
+        // log preprocessing
         int length = strlen (buf);
-        if (buf [length - 1] == '\n')
-           buf [length - 1] = '\0';
+        log_preprocess(buf,length);
+
 
 
         asem [0].sem_op = -1;
         if (semop (buffer_count_sem, asem, 1) == -1)
-	    error ("semop: buffer_count_sem");
+	        error ("semop: buffer_count_sem");
     
 
         asem [0].sem_op = -1;
         if (semop (mutex_sem, asem, 1) == -1)
-	    error ("semop: mutex_sem");
+	        error ("semop: mutex_sem");
 
 
-            sprintf (shared_mem_ptr -> buf [shared_mem_ptr -> buffer_index], "%d:[%s]\n", getpid (), buf);
+        sprintf (shared_mem_ptr -> buf [shared_mem_ptr -> buffer_index], "%d:[%s]\n", getpid (), buf);
             (shared_mem_ptr -> buffer_index)++;
             if (shared_mem_ptr -> buffer_index == MAX_BN)
                 shared_mem_ptr -> buffer_index = 0;
@@ -53,7 +53,7 @@ int main (int argc, char **argv)
         if (semop (logger_signal_sem, asem, 1) == -1)
 	    error ("semop: logger_signal_sem");
 
-        printf ("Please type a message: ");
+        printf ("type to produce log: ");
     }
  
     if (shmdt ((void *) shared_mem_ptr) == -1)
