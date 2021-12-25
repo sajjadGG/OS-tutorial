@@ -35,6 +35,7 @@ int * get_number(long* pos)
         *pos = new_pos;
         printf("%s", line);
     } 
+    fclose(file);
     return 0;
 }
 

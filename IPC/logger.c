@@ -26,6 +26,7 @@ int main (int argc, char **argv)
         // FILE *fp;
         // fp = fopen("log.txt","a+");
         // fprintf (fp,"%s", buf);
+        // fclose(fp)
 
     }
     
