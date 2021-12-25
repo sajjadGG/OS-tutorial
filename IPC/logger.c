@@ -6,6 +6,10 @@ int main (int argc, char **argv)
 {
 
 
+    
+    int fd;
+    char * myfifo = "/tmp/myfifo";
+    char buf[MAX_BUF];
 
     printf ("logger: start initialization\n");
 
