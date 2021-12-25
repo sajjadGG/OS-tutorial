@@ -33,7 +33,11 @@ int * get_number(long* pos)
     new_pos = ftell(file);
     if(new_pos != *pos){
         *pos = new_pos;
-        printf("%s", line);
+
+        FILE *fp;
+        fp = fopen(MKRES,"a+");
+        fprintf (fp,"%s", line);
+        fclose(fp)
     } 
     fclose(file);
     return 0;

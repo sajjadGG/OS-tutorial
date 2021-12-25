@@ -23,10 +23,7 @@ int main (int argc, char **argv)
     while (1) {  
 
         get_number(&pos);
-        // FILE *fp;
-        // fp = fopen("log.txt","a+");
-        // fprintf (fp,"%s", buf);
-        // fclose(fp)
+
 
     }
     
