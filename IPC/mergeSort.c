@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
-#define PN
+#define PN 4
 
 void mergeSort(int arr[], int l, int h);
 void merge(int a[], int l1, int h1, int h2);
@@ -16,7 +16,7 @@ void mergeSort_parallel(int a[], int l, int h)
     //TODO stop based on number of created process
     if (p_count>=PN)
     {
-        mergeSort(a+l, len);
+        mergeSort(a, l,h);
         return;
     }
  
