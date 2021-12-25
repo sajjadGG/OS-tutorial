@@ -10,6 +10,7 @@ int main (int argc, char **argv)
     int fd;
     char * myfifo = "/tmp/myfifo";
     char buf[MAX_BUF];
+    long pos=0;
 
     printf ("logger: start initialization\n");
 
@@ -21,13 +22,11 @@ int main (int argc, char **argv)
 
     while (1) {  
 
-        fd = open(myfifo, O_RDONLY);
-        read(fd, buf, MAX_BUF);
-    
-        FILE *fp;
-        fp = fopen("log.txt","a+");
-        fprintf (fp,"%s", buf);
-        fclose(fp);
+        get_number(&pos);
+        // FILE *fp;
+        // fp = fopen("log.txt","a+");
+        // fprintf (fp,"%s", buf);
+
     }
     
 }

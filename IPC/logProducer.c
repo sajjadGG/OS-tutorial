@@ -5,7 +5,7 @@ int main (int argc, char **argv)
 {
 
     int fd;
-    char * myfifo = '/tmp/myfifo';
+    char * myfifo = MKPIPE;
 
     mkfifo(myfifo,0666);
 

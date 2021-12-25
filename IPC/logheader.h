@@ -12,12 +12,8 @@
 #define MAX_BUF 1024
 
 #define MAX_BN 10
-#define SMK_PATH "logger.c"
-#define SEMK_PATH "logProducer.c"
-#define SEMBC_PATH "logheader.h"
-#define SEMSS_PATH "Makefile"
-#define PROJECT_ID 'S'
-
+#define MKPIPE "/tmp/myfifo"
+#define MKRES "log.txt"
 
 void error (char *msg);
 void log_preprocess(char buf[], int length);
@@ -35,7 +31,4 @@ typedef union
     ushort array [1];
 }semun;
 
-struct shared_memory * initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr);
-
-struct shared_memory * initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr);
-
+int * get_number(long* pos);
