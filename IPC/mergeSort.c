@@ -4,22 +4,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
- 
-void insertionSort(int arr[], int n);
+#define PN
+
+void mergeSort(int arr[], int l, int h);
 void merge(int a[], int l1, int h1, int h2);
- 
+int p_count=0; 
 void mergeSort_parallel(int a[], int l, int h)
 {
     int i, len=(h-l+1);
  
     //TODO stop based on number of created process
-    if (len<=5)
+    if (p_count>=PN)
     {
-        insertionSort(a+l, len);
+        mergeSort(a+l, len);
         return;
     }
  
     pid_t lpid,rpid;
+    p_count+=2; // count optimistically
     lpid = fork();
     if (lpid==0)
     {
@@ -46,25 +48,20 @@ void mergeSort_parallel(int a[], int l, int h)
     merge(a, l, l+len/2-1, h);
 }
  
-/* change to merge sort*/
-void insertionSort(int arr[], int n)
+/* merge sort sequential*/
+void mergeSort(int arr[], int l, int r)
 {
-   int i, key, j;
-   for (i = 1; i < n; i++)
-   {
-       key = arr[i];
-       j = i-1;
- 
-       /* Move elements of arr[0..i-1], that are
-          greater than key, to one position ahead
-          of their current position */
-       while (j >= 0 && arr[j] > key)
-       {
-           arr[j+1] = arr[j];
-           j = j-1;
-       }
-       arr[j+1] = key;
-   }
+    if (l < r) {
+        // Same as (l+r)/2, but avoids overflow for
+        // large l and h
+        int m = l + (r - l) / 2;
+  
+        // Sort first and second halves
+        mergeSort(arr, l, m);
+        mergeSort(arr, m + 1, r);
+  
+        merge(arr, l, m, r);
+    }
 }
  
 // Method to merge sorted subarrays
