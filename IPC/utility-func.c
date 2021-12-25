@@ -32,7 +32,7 @@ int * get_number(long* pos)
     }
     new_pos = ftell(file);
     if(new_pos != *pos){
-        *pos = new_pos
+        *pos = new_pos;
         printf("%s", line);
     } 
     return 0;
