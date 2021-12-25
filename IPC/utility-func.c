@@ -18,6 +18,7 @@ int * get_number(long* pos)
 
     FILE* file = fopen(MKPIPE, "r");
     char line[256];
+    long new_pos;
 
     if (file==NULL) 
     {
@@ -27,9 +28,13 @@ int * get_number(long* pos)
     {
         fseek(file , *pos , SEEK_CUR);
         fgets(line, sizeof(line), file);
-        printf("%s", line);
+        
     }
-    *pos = ftell(file);
+    new_pos = ftell(file);
+    if(new_pos != *pos){
+        *pos = new_pos
+        printf("%s", line);
+    } 
     return 0;
 }
 
