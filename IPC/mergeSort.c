@@ -1,4 +1,3 @@
-// C program to implement concurrent merge sort
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/shm.h>
@@ -113,7 +112,7 @@ void fillData(int a[], int len)
 }
  
 void printArr(int arr[] , int size){
-    printf("printing array:\n")
+    printf("printing array:\n");
     int i=0;
     for(i=0;i<size;i++){
         printf("%d ",arr[i]);
