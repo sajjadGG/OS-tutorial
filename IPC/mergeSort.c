@@ -93,7 +93,12 @@ void merge(int a[], int l1, int h1, int h2)
 }
  
 
- 
+void fillrand(int arr[] , int size){
+
+    for (i=0; i<size; i++)
+        arr[i] = rand();
+    return;
+} 
  
 void printArr(int arr[] , int size){
     printf("printing array:\n");
@@ -130,7 +135,8 @@ int main()
         _exit(1);
     }
  
-    shm_array = {12,25,36,78,2,3,5,6,8,11,0,135,55,44,32,69};
+    srand(time(NULL));
+    fillrand(shm_array, length);
  
     mergeSort_parallel(shm_array, 0, length-1);
  
