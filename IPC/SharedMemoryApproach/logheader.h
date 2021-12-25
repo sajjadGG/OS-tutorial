@@ -6,10 +6,7 @@
 #include <sys/ipc.h>
 #include <sys/shm.h> 
 #include <sys/sem.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 
-#define MAX_BUF 1024
 
 #define MAX_BN 10
 #define SMK_PATH "logger.c"
