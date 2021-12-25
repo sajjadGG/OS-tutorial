@@ -94,7 +94,7 @@ void merge(int a[], int l1, int h1, int h2)
  
 
 void fillrand(int arr[] , int size){
-
+    int i=0;
     for (i=0; i<size; i++)
         arr[i] = rand();
     return;
