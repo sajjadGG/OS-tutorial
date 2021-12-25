@@ -32,7 +32,7 @@ typedef union
     ushort array [1];
 }semun;
 
-void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr);
+struct shared_memory * initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr);
 
-void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr);
+struct shared_memory * initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr);
 

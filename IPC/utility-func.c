@@ -1,6 +1,6 @@
 #include "logheader.h"
 
-void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
+struct shared_memory * initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
 {
     if ((*s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
         error ("ftok failed for SMK");
@@ -51,11 +51,13 @@ void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int
     if (semctl (*ms, 0, SETVAL, *sem_attr) == -1)
         error ("semctl SETVAL failed for SSS"); 
 
+    return shared_mem_ptr;
+
 }
 
 
 
-void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr)
+struct shared_memory * initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr)
 {
     if ((*s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
         error ("ftok failed for SMK");
@@ -87,6 +89,8 @@ void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, st
         error ("ftok failed for SEMSS");
     if ((*sss = semget (*s_key, 1, 0)) == -1)
         error ("semget faield for SEMSS");
+
+    return shared_mem_ptr;
 
 }
 
