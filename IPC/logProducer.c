@@ -26,10 +26,9 @@ int main (int argc, char **argv)
         int length = strlen (buf);
         log_preprocess(buf,length);
 
-        fd = fopen(myfifo, 'a+');
-        sprintf(filebuf,"%d:[%s]\n", getpid (), buf);
-        write(fd,filebuf,sizeof(filebuf));
-        close(fd);
+        fd = fopen(myfifo, "a+");
+        fprintf(fd,"%d:[%s]\n", getpid (), buf);
+        fclose(fd);
 
         printf ("type to produce log: ");
     }
