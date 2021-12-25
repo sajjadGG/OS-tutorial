@@ -1,4 +1,4 @@
-
+#include "logheader.h"
 
 void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
 {
@@ -55,7 +55,7 @@ void initialize(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int
 
 
 
-void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, semun * sem_attr, int* shm, struct shared_memory *shared_mem_ptr)
+void initialize_producer(key_t * s_key,int *ms, int *bcs, int *sss, int* shm, struct shared_memory *shared_mem_ptr)
 {
     if ((*s_key = ftok (SEMK_PATH, PROJECT_ID)) == -1)
         error ("ftok failed for SMK");

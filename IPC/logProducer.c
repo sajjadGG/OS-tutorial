@@ -13,7 +13,7 @@ int main (int argc, char **argv)
     int mutex_sem, buffer_count_sem, logger_signal_sem;
     
 
-    initialize_producer(&s_key,&mutex_sem,&buffer_count_sem,&logger_signal_sem,&sem_attr,&shm_id,shared_mem_ptr)
+    initialize_producer(&s_key,&mutex_sem,&buffer_count_sem,&logger_signal_sem,&shm_id,shared_mem_ptr);
     struct sembuf asem [1];
 
     asem [0].sem_num = 0;
